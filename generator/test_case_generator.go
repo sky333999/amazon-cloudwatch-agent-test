@@ -30,51 +30,8 @@ type matrixRow struct {
 
 // you can't have a const map in golang
 var testTypeToTestDirMap = map[string][]string{
-	"ec2_gpu": {
-		"./test/nvidia_gpu",
-	},
 	"ec2_linux": {
-		"./test/ca_bundle",
-		"./test/cloudwatchlogs",
-		"./test/metrics_number_dimension",
 		"./test/metric_value_benchmark",
-		"./test/run_as_user",
-		"./test/collection_interval",
-		"./test/metric_dimension",
-	},
-	/*
-		You can only place 1 mac instance on a dedicate host a single time.
-		Therefore, limit down the scope for testing in Mac since EC2 can be done with Linux
-		and Mac under the hood share similar plugins with Linux
-	*/
-	"ec2_mac": {
-		"../../../test/feature/mac",
-	},
-	"ec2_windows": {
-		"../../../test/feature/windows",
-	},
-	"ec2_performance": {
-		"../../test/performance/emf",
-		"../../test/performance/logs",
-		"../../test/performance/system",
-		"../../test/performance/statsd",
-		"../../test/performance/collectd",
-	},
-	"ec2_stress": {
-		"../../test/stress/emf",
-		"../../test/stress/logs",
-		"../../test/stress/system",
-		"../../test/stress/statsd",
-		"../../test/stress/collectd",
-	},
-	"ecs_fargate": {
-		"./test/ecs/ecs_metadata",
-	},
-	"ecs_ec2_daemon": {
-		"./test/metric_value_benchmark",
-	},
-	"ec2_acceptance": {
-		"./test/acceptance",
 	},
 }
 

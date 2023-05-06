@@ -15,16 +15,17 @@ import (
 )
 
 const (
-	CatCommand       = "cat "
-	AppOwnerCommand  = "ps -u -p "
-	ConfigOutputPath = "/opt/aws/amazon-cloudwatch-agent/bin/config.json"
-	Namespace        = "CWAgent"
-	Host             = "host"
-	AgentLogFile     = "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log"
-	InstallAgentVersionPath   = "/opt/aws/amazon-cloudwatch-agent/bin/CWAGENT_VERSION"
+	CatCommand              = "cat "
+	AppOwnerCommand         = "ps -u -p "
+	ConfigOutputPath        = "/opt/aws/amazon-cloudwatch-agent/bin/config.json"
+	Namespace               = "CWAgent"
+	Host                    = "host"
+	AgentLogFile            = "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log"
+	InstallAgentVersionPath = "/opt/aws/amazon-cloudwatch-agent/bin/CWAGENT_VERSION"
 )
 
 type PackageManager int
+
 const (
 	RPM PackageManager = iota
 	DEB
@@ -81,7 +82,7 @@ func printOutputAndError(stdout []byte, err error) {
 		return
 	}
 	stderr := ""
-	ee, ok :=  err.(*exec.ExitError)
+	ee, ok := err.(*exec.ExitError)
 	if ok {
 		stderr = string(ee.Stderr)
 	}
@@ -110,9 +111,9 @@ func InstallAgent(installerFilePath string) error {
 	var c *exec.Cmd
 	// Assuming lower case
 	if strings.HasSuffix(installerFilePath, ".rpm") {
-		c = exec.Command("bash", "-c", "sudo rpm -Uvh " + installerFilePath)
+		c = exec.Command("bash", "-c", "sudo rpm -Uvh "+installerFilePath)
 	} else {
-		c = exec.Command("bash", "-c", "sudo dpkg -i -E " + installerFilePath)
+		c = exec.Command("bash", "-c", "sudo dpkg -i -E "+installerFilePath)
 	}
 	out, err := c.Output()
 	printOutputAndError(out, err)
@@ -130,6 +131,20 @@ func StartAgent(configOutputPath string, fatalOnFailure bool) error {
 		log.Printf(fmt.Sprint(err) + string(out))
 	} else {
 		log.Printf("Agent has started")
+	}
+
+	return err
+}
+
+func StatusAgent() error {
+	out, err := exec.
+		Command("bash", "-c", "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a status").
+		Output()
+
+	if err != nil {
+		log.Printf(fmt.Sprint(err) + string(out))
+	} else {
+		log.Printf("Agent status:" + string(out))
 	}
 
 	return err
@@ -211,4 +226,3 @@ func ReplaceLocalStackHostName(pathIn string) {
 		log.Fatal(fmt.Sprint(err) + string(out))
 	}
 }
-

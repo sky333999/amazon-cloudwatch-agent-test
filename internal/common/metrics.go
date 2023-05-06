@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net"
 	"time"
 
@@ -37,6 +38,7 @@ func StartSendingMetrics(receiver string, duration, sendingInterval time.Duratio
 
 func SendCollectDMetrics(metricPerInterval int, sendingInterval, duration time.Duration) error {
 	// https://github.com/collectd/go-collectd/tree/92e86f95efac5eb62fa84acc6033e7a57218b606
+	log.Printf("Collectd here1")
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -46,9 +48,12 @@ func SendCollectDMetrics(metricPerInterval int, sendingInterval, duration time.D
 			SecurityLevel: network.None,
 		})
 
+	log.Printf("Collectd here2")
 	if err != nil {
+		log.Printf("Collectd here3")
 		return err
 	}
+	log.Printf("Collectd here4")
 
 	defer client.Close()
 
@@ -58,6 +63,7 @@ func SendCollectDMetrics(metricPerInterval int, sendingInterval, duration time.D
 
 	// Sending the collectd metric within the first minute before the ticker kicks in the next minute
 	for t := 1; t <= metricPerInterval/2; t++ {
+		log.Printf("Collectd here4.5")
 		_ = client.Write(ctx, &api.ValueList{
 			Identifier: api.Identifier{
 				Host:   exec.Hostname(),
@@ -81,17 +87,22 @@ func SendCollectDMetrics(metricPerInterval int, sendingInterval, duration time.D
 		})
 
 		if err != nil && !errors.Is(err, network.ErrNotEnoughSpace) {
+			log.Printf("Collectd here4.6")
 			return err
 		}
 	}
-
+	log.Printf("Collectd here5")
+	_ = StatusAgent()
+	log.Printf(ReadAgentOutput(1 * time.Minute))
 	if err := client.Flush(); err != nil {
+		log.Printf("Collectd here5.5. %v", err)
 		return err
 	}
 
 	for {
 		select {
 		case <-ticker.C:
+			log.Printf("Collectd here6")
 			for t := 1; t <= metricPerInterval/2; t++ {
 				_ = client.Write(ctx, &api.ValueList{
 					Identifier: api.Identifier{
@@ -116,14 +127,19 @@ func SendCollectDMetrics(metricPerInterval int, sendingInterval, duration time.D
 				})
 
 				if err != nil && !errors.Is(err, network.ErrNotEnoughSpace) {
+					log.Printf("Collectd here9. %v", err)
 					return err
 				}
 			}
 
 			if err := client.Flush(); err != nil {
+				log.Printf("Collectd here8. %v", err)
+				_ = StatusAgent()
+				log.Printf(ReadAgentOutput(1 * time.Minute))
 				return err
 			}
 		case <-endTimeout:
+			log.Printf("Collectd here7")
 			return nil
 		}
 	}
