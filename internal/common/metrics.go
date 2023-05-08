@@ -91,6 +91,8 @@ func SendCollectDMetrics(metricPerInterval int, sendingInterval, duration time.D
 			return err
 		}
 	}
+	time.Sleep(30 * time.Second)
+
 	log.Printf("Collectd here5")
 	_ = StatusAgent()
 	log.Printf(ReadAgentOutput(1 * time.Minute))
@@ -98,8 +100,6 @@ func SendCollectDMetrics(metricPerInterval int, sendingInterval, duration time.D
 		log.Printf("Collectd here5.5. %v", err)
 		return err
 	}
-
-	time.Sleep(30 * time.Second)
 
 	for {
 		select {
