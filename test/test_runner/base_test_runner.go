@@ -63,7 +63,7 @@ func (t *TestRunner) Run(s ITestSuite) {
 	}
 	s.AddToSuiteResult(testGroupResult)
 	if testGroupResult.GetStatus() != status.SUCCESSFUL {
-		log.Printf("%v test group failed due to: %w", testName, err)
+		log.Printf("%v test group failed due to %v", testName, err)
 	}
 }
 
@@ -88,7 +88,6 @@ func (t *TestRunner) runAgent() (status.TestGroupResult, error) {
 	log.Printf("Starting agent using agent config file %s", agentConfigPath)
 	common.CopyFile(agentConfigPath, configOutputPath)
 	err = common.StartAgent(configOutputPath, false)
-	log.Printf("Collectd outside1")
 
 	if err != nil {
 		testGroupResult.TestResults[0].Status = status.FAILED
@@ -100,7 +99,6 @@ func (t *TestRunner) runAgent() (status.TestGroupResult, error) {
 		testGroupResult.TestResults[0].Status = status.FAILED
 		return testGroupResult, fmt.Errorf("Failed to complete setup after agent run due to: %w", err)
 	}
-	log.Printf("Collectd outside2")
 
 	runningDuration := t.TestRunner.GetAgentRunDuration()
 	time.Sleep(runningDuration)
