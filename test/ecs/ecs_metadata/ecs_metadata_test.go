@@ -62,6 +62,7 @@ func TestValidatingCloudWatchLogs(t *testing.T) {
 				return false
 			}
 			for _, l := range logs {
+				log.Printf("Validating %s", l)
 				if !awsservice.MatchEMFLogWithSchema(l, rs, func(s string) bool {
 					ok := true
 					if strings.Contains(l, "CloudWatchMetrics") {

@@ -7,11 +7,11 @@ package test_runner
 
 import (
 	"fmt"
+	"github.com/aws/amazon-cloudwatch-agent-test/internal/common"
 	"log"
 	"path/filepath"
 	"time"
 
-	"github.com/aws/amazon-cloudwatch-agent-test/internal/common"
 	"github.com/aws/amazon-cloudwatch-agent-test/test/metric/dimension"
 	"github.com/aws/amazon-cloudwatch-agent-test/test/status"
 )
@@ -63,7 +63,7 @@ func (t *TestRunner) Run(s ITestSuite) {
 	}
 	s.AddToSuiteResult(testGroupResult)
 	if testGroupResult.GetStatus() != status.SUCCESSFUL {
-		log.Printf("%v test group failed", testName)
+		log.Printf("%v test group failed due to: %w", testName, err)
 	}
 }
 
