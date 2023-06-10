@@ -73,13 +73,7 @@ func (t *PrometheusTestRunner) GetAgentConfigFileName() string {
 }
 
 func (t *PrometheusTestRunner) SetupBeforeAgentRun() error {
-	agentConfig := test_runner.AgentConfig{
-		ConfigFileName:   t.GetAgentConfigFileName(),
-		SSMParameterName: t.SSMParameterName(),
-		UseSSM:           t.UseSSM(),
-	}
-	t.SetAgentConfig(agentConfig)
-	err := t.SetUpConfig()
+	err := t.BaseTestRunner.SetupBeforeAgentRun()
 	if err != nil {
 		return err
 	}
@@ -93,7 +87,7 @@ func (t *PrometheusTestRunner) SetupBeforeAgentRun() error {
 	if err != nil {
 		return err
 	}
-	return t.SetUpConfig()
+	return nil
 }
 
 func (t *PrometheusTestRunner) GetMeasuredMetrics() []string {
