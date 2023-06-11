@@ -79,7 +79,7 @@ func (f *Factory) GetDimensions(instructions []Instruction) ([]types.Dimension, 
 func (f *Factory) executeInstruction(instruction Instruction) types.Dimension {
 	for _, provider := range f.Providers {
 		dim := provider.GetDimension(instruction)
-		log.Printf("instruction %v provider %s returned dimension (name=%s, val=%s)", instruction, provider.Name(), *dim.Name, *dim.Value)
+		log.Printf("instruction %v provider %s returned dimension %v", instruction, provider.Name(), dim)
 		if (dim != types.Dimension{}) {
 			return dim
 		}
