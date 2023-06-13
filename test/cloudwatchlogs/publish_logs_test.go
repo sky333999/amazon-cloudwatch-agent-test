@@ -102,6 +102,8 @@ func TestWriteLogsToCloudWatch(t *testing.T) {
 
 			// check CWL to ensure we got the expected number of logs in the log stream
 			ok, err := awsservice.ValidateLogs(instanceId, instanceId, &start, &end, func(logs []string) bool {
+				log.Printf("Len of logs got: %d", len(logs))
+				log.Printf("Expected num of logs: %d", param.numExpectedLogs)
 				return param.numExpectedLogs == len(logs)
 			})
 			assert.NoError(t, err)
