@@ -23,6 +23,11 @@ variable "ami" {
   default = "cloudwatch-agent-integration-test-al2*"
 }
 
+variable "user" {
+  type    = string
+  default = ""
+}
+
 variable "arc" {
   type    = string
   default = "amd64"
