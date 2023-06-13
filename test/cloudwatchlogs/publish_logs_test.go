@@ -126,6 +126,9 @@ func TestRotatingLogsDoesNotSkipLines(t *testing.T) {
 
 	defer awsservice.DeleteLogGroupAndStream(logGroup, logStream)
 
+	common.DeleteFile(common.AgentLogFile)
+	common.TouchFile(common.AgentLogFile)
+
 	start := time.Now()
 	common.CopyFile(cfgFilePath, configOutputPath)
 
@@ -139,6 +142,12 @@ func TestRotatingLogsDoesNotSkipLines(t *testing.T) {
 	common.RunCommand("/usr/bin/python3 resources/write_and_rotate_logs.py")
 	time.Sleep(agentRuntime)
 	common.StopAgent()
+
+	agentLog, err := common.RunCommand(common.CatCommand + common.AgentLogFile)
+	if err != nil {
+		return
+	}
+	t.Logf("Agent logs %s", agentLog)
 
 	// These expected log lines are created using resources/write_and_rotate_logs.py,
 	// which are taken directly from the repro case in https://github.com/aws/amazon-cloudwatch-agent/issues/447
