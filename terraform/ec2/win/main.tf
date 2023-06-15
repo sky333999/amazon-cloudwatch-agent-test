@@ -31,6 +31,7 @@ locals {
   ssh_key_name        = var.ssh_key_name != "" ? var.ssh_key_name : aws_key_pair.aws_ssh_key[0].key_name
   private_key_content = var.ssh_key_name != "" ? var.ssh_key_value : tls_private_key.ssh_key[0].private_key_pem
   ssm_parameter_name  = "WindowsAgentConfigSSMTest"
+  test_dir_workaround = var.test_dir
 }
 
 #####################################################################
@@ -44,7 +45,7 @@ module "validator" {
   family         = "windows"
   action         = "upload"
   s3_bucket      = var.s3_bucket
-  test_dir       = var.test_dir
+  test_dir       = local.test_dir_workaround
   temp_directory = "C:/Users/Administrator/AppData/Local/Temp"
   cwa_github_sha = var.cwa_github_sha
 }
