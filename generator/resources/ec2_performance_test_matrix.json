@@ -5,19 +5,5 @@
         "arc": "amd64",
         "valuesPerMinute": 100,
         "family": "linux"
-      },
-      {
-        "os": "al2",
-        "ami": "cloudwatch-agent-integration-test-al2*",
-        "arc": "amd64",
-        "valuesPerMinute": 1000,
-        "family": "linux"
-      },
-      {
-        "os": "al2",
-        "ami": "cloudwatch-agent-integration-test-al2*",
-        "arc": "amd64",
-        "valuesPerMinute": 5000,
-        "family": "linux"
       }
 ]
