@@ -18,7 +18,7 @@ data "aws_eks_cluster_auth" "cluster_auth" {
 }
 
 resource "aws_eks_cluster" "cluster" {
-  name     = "cwagent-eks-integ-${module.common.testing_id}"
+  name     = "cwagent-eks-integ-${replace(replace(replace(var.test_dir, "../", ""), "./", ""), "/", "-")}-${var.trigger}-${module.common.testing_id}"
   role_arn = module.basic_components.role_arn
   version  = var.k8s_version
   enabled_cluster_log_types = [

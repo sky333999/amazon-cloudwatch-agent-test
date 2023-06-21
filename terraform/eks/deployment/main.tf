@@ -18,9 +18,9 @@ data "aws_eks_cluster_auth" "this" {
 }
 
 resource "aws_eks_cluster" "this" {
-  name     = "cwagent-eks-integ-${module.common.testing_id}"
-  role_arn = module.basic_components.role_arn
-  version  = var.k8s_version
+  name                      = "cwagent-eks-integ-${replace(replace(replace(var.test_dir, "../", ""), "./", ""), "/", "-")}-${var.trigger}-${module.common.testing_id}"
+  role_arn                  = module.basic_components.role_arn
+  version                   = var.k8s_version
   enabled_cluster_log_types = [
     "api",
     "audit",
@@ -165,7 +165,7 @@ resource "aws_security_group_rule" "nodes_cluster_inbound" {
 
 resource "kubernetes_namespace" "namespace" {
   metadata {
-    name = "amazon-cloudwatch"
+    name   = "amazon-cloudwatch"
     labels = {
       name = "amazon-cloudwatch"
     }
@@ -246,7 +246,7 @@ resource "kubernetes_deployment" "service" {
 
 resource "kubernetes_namespace" "redis" {
   metadata {
-    name = "redis-test"
+    name   = "redis-test"
     labels = {
       name = "redis-test"
     }
@@ -257,7 +257,7 @@ resource "kubernetes_pod" "redis_pod" {
   metadata {
     name      = "redis-instance"
     namespace = "redis-test"
-    labels = {
+    labels    = {
       app = "redis"
     }
   }
@@ -291,8 +291,8 @@ resource "kubernetes_service" "redis_service" {
     aws_eks_node_group.this
   ]
   metadata {
-    name      = "my-redis-metrics"
-    namespace = "redis-test"
+    name        = "my-redis-metrics"
+    namespace   = "redis-test"
     annotations = {
       "prometheus.io/port"   = "9121"
       "prometheus.io/scrape" = "true"
@@ -323,13 +323,13 @@ locals {
 
 data "template_file" "cwagent_config" {
   template = file(local.cwagent_config)
-  vars = {
+  vars     = {
   }
 }
 
 data "template_file" "prometheus_config" {
   template = file(local.prometheus_config)
-  vars = {
+  vars     = {
   }
 }
 

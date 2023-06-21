@@ -2,9 +2,15 @@
 // SPDX-License-Identifier: MIT
 
 module "fluent_common" {
-  source        = "../common"
-  ami_type      = var.ami_type
-  instance_type = var.instance_type
+  source             = "../common"
+  ami_type           = var.ami_type
+  instance_type      = var.instance_type
+  test_dir           = var.test_dir
+  k8s_version        = var.k8s_version
+  region             = var.region
+  cwagent_image_repo = var.cwagent_image_repo
+  cwagent_image_tag  = var.cwagent_image_tag
+  trigger            = var.trigger
 }
 
 resource "kubernetes_config_map" "cluster_info" {
@@ -75,7 +81,7 @@ resource "kubernetes_config_map" "fluentbit_config" {
   metadata {
     name      = "fluent-bit-config"
     namespace = "amazon-cloudwatch"
-    labels = {
+    labels    = {
       k8s-app = "fluent-bit"
     }
   }
@@ -291,7 +297,7 @@ resource "kubernetes_daemonset" "fluentbit-daemon" {
   metadata {
     name      = "fluent-bit"
     namespace = "amazon-cloudwatch"
-    labels = {
+    labels    = {
       k8s-app                         = "fluent-bit"
       version                         = "v1"
       "kubernetes.io/cluster-service" = "true"
