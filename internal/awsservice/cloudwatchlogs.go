@@ -145,19 +145,19 @@ func GetLogStreams(logGroupName string) []types.LogStream {
 			Descending:   aws.Bool(true),
 			Limit:        aws.Int32(10),
 		})
-	
+
 		if err != nil {
 			log.Printf("failed to get log streams for log group: %v - err: %v", logGroupName, err)
 			continue
 		}
-		
+
 		if len(describeLogStreamsOutput.LogStreams) > 0 {
-			return describeLogStreamsOutput.LogStreams 
+			return describeLogStreamsOutput.LogStreams
 		}
 
 		time.Sleep(10 * time.Second)
 	}
-	
+
 	return []types.LogStream{}
 }
 
@@ -167,7 +167,10 @@ func MatchEMFLogWithSchema(logEntry string, s *jsonschema.Schema, logValidator f
 		log.Println("failed to execute schema validator:", e)
 		return false
 	} else if len(keyErrors) > 0 {
-		log.Printf("failed schema validation: %v\n", keyErrors)
+		log.Printf("failed schema validation for log entry %v with error: %v\n", logEntry, keyErrors)
+		for error := range keyErrors {
+			log.Printf("%v\n", error)
+		}
 		return false
 	}
 
