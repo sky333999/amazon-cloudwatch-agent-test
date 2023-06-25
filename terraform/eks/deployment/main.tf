@@ -164,6 +164,10 @@ resource "aws_security_group_rule" "nodes_cluster_inbound" {
 }
 
 resource "kubernetes_namespace" "namespace" {
+  depends_on = [
+    aws_eks_node_group.this,
+    aws_eks_cluster.this
+  ]
   metadata {
     name   = "amazon-cloudwatch"
     labels = {
