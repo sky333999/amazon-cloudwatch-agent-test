@@ -34,26 +34,56 @@ func ValidateMetric(metricName, namespace string, dimensionsFilter []types.Dimen
 		RecentlyActive: "PT3H",
 		Dimensions:     dimensionsFilter,
 	}
-	data, err := CwmClient.ListMetrics(ctx, &listMetricsInput)
-	if err != nil {
-		return errors.New(fmt.Sprintf("Error getting metric data %v", err))
-	}
-
-	// Only validate if certain metrics are published by CloudWatchAgent in corresponding namespace
-	// Since the metric value can be unpredictive.
-	if len(data.Metrics) == 0 {
-		dims := make([]metric, len(dimensionsFilter))
-		for i, filter := range dimensionsFilter {
-			dims[i] = metric{
-				name:  *filter.Name,
-				value: *filter.Value,
-			}
+	//data, err := CwmClient.ListMetrics(ctx, &listMetricsInput)
+	//if err != nil {
+	//	return errors.New(fmt.Sprintf("Error getting metric data %v", err))
+	//}
+	//
+	//// Only validate if certain metrics are published by CloudWatchAgent in corresponding namespace
+	//// Since the metric value can be unpredictive.
+	//if len(data.Metrics) == 0 {
+	//	dims := make([]metric, len(dimensionsFilter))
+	//	for i, filter := range dimensionsFilter {
+	//		dims[i] = metric{
+	//			name:  *filter.Name,
+	//			value: *filter.Value,
+	//		}
+	//	}
+	//	return errors.New(fmt.Sprintf("No metrics found for dimension %v metric name %v namespace %v",
+	//		dims, metricName, namespace))
+	//}
+	found := false
+	for i := 0; i < 10; i++ {
+		data, err := CwmClient.ListMetrics(ctx, &listMetricsInput)
+		if err != nil {
+			return errors.New(fmt.Sprintf("Error getting metric data %v", err))
 		}
-		return errors.New(fmt.Sprintf("No metrics found for dimension %v metric name %v namespace %v",
-			dims, metricName, namespace))
+		if len(data.Metrics) > 0 {
+			log.Printf("Found %d metrics for metric name %v namespace %v", len(data.Metrics), metricName, namespace)
+			found = true
+			break
+		}
+		if len(data.Metrics) == 0 {
+			dims := make([]metric, len(dimensionsFilter))
+			for i, filter := range dimensionsFilter {
+				dims[i] = metric{
+					name:  *filter.Name,
+					value: *filter.Value,
+				}
+			}
+			log.Printf(fmt.Sprintf("No metrics found for dimension %v metric name %v namespace %v",
+				dims, metricName, namespace))
+
+		}
+		time.Sleep(60 * time.Second)
 	}
 
-	return nil
+	if found {
+		return nil
+	} else {
+		return errors.New(fmt.Sprintf("Even after waiting, No metrics found for metric name %v namespace %v",
+			metricName, namespace))
+	}
 }
 
 // ValidateMetrics takes the metric name, metric dimension and corresponding namespace that contains the metric
