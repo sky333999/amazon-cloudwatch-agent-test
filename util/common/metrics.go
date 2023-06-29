@@ -20,9 +20,13 @@ import (
 // StartSendingMetrics will generate metrics load based on the receiver (e.g 5000 statsd metrics per minute)
 func StartSendingMetrics(receiver string, duration, sendingInterval time.Duration, metricPerInterval int, metricLogGroup, metricNamespace string) (err error) {
 	go func() {
+		var dimensions []string
+		for d := 1; d <= 10; d++ {
+			dimensions = append(dimensions, fmt.Sprintf("test_dimension_test_dimension_test_dimension_test_dimension_test_dimension_test_dimension_test_dimension_test_dimension_test_dimension_test_dimension_test_dimension_%d:test_val", d))
+		}
 		switch receiver {
 		case "statsd":
-			err = SendStatsdMetrics(metricPerInterval, []string{}, sendingInterval, duration)
+			err = SendStatsdMetrics(metricPerInterval, dimensions, sendingInterval, duration)
 		case "collectd":
 			err = SendCollectDMetrics(metricPerInterval, sendingInterval, duration)
 		case "emf":
